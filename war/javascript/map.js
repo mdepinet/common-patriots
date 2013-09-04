@@ -60,18 +60,22 @@ var updateMap = function() {
 
 function getMakeActivePolygonFn(polygon) {
 	return function() {
-		var oldActive = document.forms["subscribe"]["polygon"].polygon;
-		if (oldActive) {
-			oldActive.setOptions({
+		var activePolygonContainer = document.getElementById("activePolygon");
+		if (activePolygonContainer && activePolygonContainer.polygon) {
+			activePolygonContainer.polygon.setOptions({
 				fillOpacity: 0.3
 			});
 		}
 		polygon.setOptions({
 			fillOpacity: 0.7
 		});
-		// google.maps.event.addListenerOnce(polygon, 'click', getMakeActivePolygonFn(polygon));
 
-		document.forms["subscribe"]["polygon"].polygon = polygon;
+		if (!activePolygonContainer) {
+			activePolygonContainer = document.createElement("polygon");
+			activePolygonContainer.setAttribute("id", "activePolygon");
+			document.body.appendChild(activePolygonContainer);
+		}
+		activePolygonContainer.polygon = polygon;
 		if (marker) {
 			var pos = marker.getPosition();
 			setActiveServiceUnit(polygon.unitName, pos.lat(), pos.lng());

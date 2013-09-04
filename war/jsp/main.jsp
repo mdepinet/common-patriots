@@ -47,13 +47,6 @@ function getLatLng() {
 		<div id="serviceUnitPage">
 			<%-- Dynamically loaded content --%>
 		</div>
-		<div id="subscribeContainer">
-			<form name="subscribe" method="post" action="/subscribe">
-				<input type="hidden" name="suId" value="${suId}" />
-				<input type="hidden" name="polygon" value="" />
-				<input type="submit" value="Subscribe" />
-			</form>
-		</div>
 	</div>
 </div>
 </body>
