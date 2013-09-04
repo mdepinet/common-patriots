@@ -1,0 +1,59 @@
+#mainPage {
+	height: 85%;
+	width: 99%;
+}
+
+#mainPageLeft {
+	height: 100%;
+	width: 55%;
+	margin: 2%;
+	float: left;
+}
+
+#mapSearchBar {
+	width: 100%;
+}
+
+#mapSearchBar input[type="text"] {
+	width: 80%;
+}
+
+#mapSearchBar input[type="submit"] {
+	width: 10%;
+}
+
+#mapContainer {
+	height: 90%;
+	width: 100%;
+}
+
+#map-canvas {
+	height: 100%;
+	width: 100%;
+}
+
+#mainPageRight {
+	height: 100%;
+	width: 37%;
+	margin: 2%;
+	float: right;
+}
+
+#serviceUnitInfo {
+	width: 100%;
+	text-align: center;
+}
+
+#serviceUnitName {
+	font-weight: bolder;
+}
+
+#serviceUnitPage {
+	width: 100%;
+	height: 80%;
+}
+
+iframe {
+	width: 100%;
+	height: 100%;
+}

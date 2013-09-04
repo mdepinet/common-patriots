@@ -1,0 +1,50 @@
+#mainContent {
+	height: 85%;
+	width: 99%;
+}
+
+#polygons {
+	height: 100%;
+	width: 100%;
+}
+
+#mapEdit {
+	height: 100%;
+	width: 80%;
+	float: left;
+}
+
+#mapControls {
+	height: 15%;
+  width: 18%;
+  border: 1% solid black;
+  float: right;
+  top: 85%;
+  position: relative;
+}
+
+#currentPolygon {
+	display: none;
+}
+
+#mapSearchBar {
+  width: 100%;
+}
+
+#mapSearchBar input[type="text"] {
+  width: 80%;
+}
+
+#mapSearchBar input[type="submit"] {
+  width: 10%;
+}
+
+#mapContainer {
+	height: 90%;
+	width: 100%;
+}
+
+#map-canvas {
+	height: 100%;
+	width: 100%;
+}
