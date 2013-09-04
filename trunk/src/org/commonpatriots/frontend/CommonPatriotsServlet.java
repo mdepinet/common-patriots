@@ -31,8 +31,15 @@ public class CommonPatriotsServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
-		if (user == null) {
-			resp.sendRedirect(userService.createLoginURL("/main.jsp"));
+		if (user == null) { // Anonymous access
+			req.setAttribute("loginURL", userService.createLoginURL("/commonpatriots"));
+			setRequestPosition(req);
+			try {
+				getServletContext().getRequestDispatcher("/jsp/main.jsp").forward(req, resp);
+			} catch (ServletException e) {
+				e.printStackTrace();
+			}
+			return;
 		} else {
 			UserBo userBo = userBoProvider.get();
 			boolean save = false;
@@ -47,17 +54,11 @@ public class CommonPatriotsServlet extends HttpServlet {
 				save = true;
 			}
 			Pair<Double, Double> position = userBo.getLocation(false);
-			String latLng = req.getHeader("X-AppEngine-CityLatLong");
 			if (position != null) {
 				req.setAttribute("latitude", position.first);
 				req.setAttribute("longitude", position.second);
-			} else if (latLng != null && latLng.matches("[-]?\\d+[.]?\\d+,[-]?\\d+[.]?\\d+")) {
-				req.setAttribute("latitude", latLng.substring(0,latLng.indexOf(",")));
-				req.setAttribute("longitude", latLng.substring(latLng.indexOf(",") + 1));
 			} else {
-				// For local executions (where X-AppEngine-CityLatLong is unavailable)
-				req.setAttribute("latitude", 30.35973);
-				req.setAttribute("longitude", -97.75153);
+				setRequestPosition(req);
 			}
 			if (save) {
 				userBo.save();
@@ -69,6 +70,18 @@ public class CommonPatriotsServlet extends HttpServlet {
 			} catch (ServletException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	private void setRequestPosition(HttpServletRequest req) {
+		String latLng = req.getHeader("X-AppEngine-CityLatLong");
+		if (latLng != null && latLng.matches("[-]?\\d+[.]?\\d+,[-]?\\d+[.]?\\d+")) {
+			req.setAttribute("latitude", latLng.substring(0,latLng.indexOf(",")));
+			req.setAttribute("longitude", latLng.substring(latLng.indexOf(",") + 1));
+		} else {
+			// For local executions (where X-AppEngine-CityLatLong is unavailable)
+			req.setAttribute("latitude", 30.35973);
+			req.setAttribute("longitude", -97.75153);
 		}
 	}
 }
