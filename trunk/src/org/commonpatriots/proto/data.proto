@@ -1,0 +1,107 @@
+syntax = "proto2";
+package org.commonpatriots.proto;
+option java_package = "org.commonpatriots.proto";
+option java_outer_classname = "CPData";
+
+message ContactInfo {
+	optional string email = 1;
+	optional string phone = 2;
+	optional string address = 3;
+	optional string city = 4;
+	optional State state = 5;
+	optional int32 zip = 6;
+	optional double latitude = 7; // Only geocode once if possible
+	optional double longitude = 8;
+}
+
+message ServiceUnit {
+	optional string id = 1;
+	optional string name = 2;
+	optional string color = 3;
+	optional ContactInfo contactInfo = 4;
+
+	message Polygon {
+		message Point {
+			required double latitude = 1;
+			required double longitude = 2;
+		}
+		optional int64 id = 1;
+		repeated Point points = 2;
+	}
+	repeated Polygon distributionZones = 5;
+	optional string infoFrameLoc = 6;
+}
+
+message Subscription {
+	optional string id = 1;
+	optional string serviceUnitId = 2;
+	optional bool active = 3 [default = true];
+	optional int32 numFlags = 4 [default = 1];
+	optional string userId = 5;
+}
+
+message User {
+	enum UserType {
+		ADMINISTRATOR = 0;
+		SERVICE_UNIT_COORDINATOR = 1;
+		CUSTOMER = 2;
+	}
+	optional string id = 1;
+	optional UserType type = 2 [default = CUSTOMER];
+	optional string serviceUnitId = 3; // For ServiceUnit Coordinators
+	optional ContactInfo contactInfo = 4;
+	optional bool confirmed = 5; // Admins must be confirmed
+}
+
+enum State {
+	AL = 0;
+	AK = 1;
+	AZ = 2;
+	AR = 3;
+	CA = 4;
+	CO = 5;
+	CT = 6;
+	DE = 7;
+	FL = 8;
+	GA = 9;
+	HI = 10;
+	ID = 11;
+	IL = 12;
+	IN = 13;
+	IA = 14;
+	KS = 15;
+	KY = 16;
+	LA = 17;
+	ME = 18;
+	MD = 19;
+	MA = 20;
+	MI = 21;
+	MN = 22;
+	MS = 23;
+	MO = 24;
+	MT = 25;
+	NE = 26;
+	NV = 27;
+	NH = 28;
+	NJ = 29;
+	NM = 30;
+	NY = 31;
+	NC = 32;
+	ND = 33;
+	OH = 34;
+	OK = 35;
+	OR = 36;
+	PA = 37;
+	RI = 38;
+	SC = 39;
+	SD = 40;
+	TN = 41;
+	TX = 42;
+	UT = 43;
+	VT = 44;
+	VA = 45;
+	WA = 46;
+	WV = 47;
+	WI = 48;
+	WY = 49;
+}
