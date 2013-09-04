@@ -118,10 +118,11 @@ function setActiveServiceUnit(unitName, lat, lng) {
 			makeOnlyChild(document.getElementById("serviceUnitPhone"), document.createTextNode(resultParts[3]));
 			makeOnlyChild(document.getElementById("serviceUnitAddress"), document.createTextNode(resultParts[4]));
 			makeOnlyChild(document.getElementById("serviceUnitCityStateZip"), document.createTextNode(resultParts[5]));
-			var iframe = document.createElement("iframe");
-			iframe.setAttribute("src", resultParts[6]);
-			iframe.setAttribute("seamless");
-			makeOnlyChild(document.getElementById("serviceUnitPage"), iframe);
+			var troopPageAnchor = document.createElement("a");
+			troopPageAnchor.setAttribute("href", resultParts[6]);
+			troopPageAnchor.setAttribute("target", "_blank");
+			makeOnlyChild(troopPageAnchor, document.createTextNode(resultParts[1] + "'s webpage"));
+			makeOnlyChild(document.getElementById("serviceUnitInfoURL"), troopPageAnchor);
 		}
 	}
 	conn.send();

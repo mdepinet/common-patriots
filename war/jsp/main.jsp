@@ -43,9 +43,7 @@ function getLatLng() {
 			<span id="serviceUnitPhone">${suPhone}</span><br />
 			<span id="serviceUnitAddress">${suAddr}</span><br />
 			<span id="serviceUnitCityStateZip">${suAddr2}</span><br />
-		</div>
-		<div id="serviceUnitPage">
-			<%-- Dynamically loaded content --%>
+			<span id="serviceUnitInfoURL">${suInfoURL}</span>
 		</div>
 	</div>
 </div>
