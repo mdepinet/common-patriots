@@ -73,7 +73,7 @@ function getDeleteFunction(id) {
 	}
 }
 function deleteServiceUnit(id) {
-	(getDeleteFunction(id))();
+	(getDeleteFunction(id))(event);
 }
 
 function createNewServiceUnit() {
