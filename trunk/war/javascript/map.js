@@ -123,6 +123,10 @@ function setActiveServiceUnit(unitName, lat, lng) {
 			troopPageAnchor.setAttribute("target", "_blank");
 			makeOnlyChild(troopPageAnchor, document.createTextNode(resultParts[1] + "'s webpage"));
 			makeOnlyChild(document.getElementById("serviceUnitInfoURL"), troopPageAnchor);
+			var iframe = document.createElement("iframe");
+			iframe.setAttribute("src", resultParts[6]);
+			iframe.setAttribute("sandbox", "");
+			makeOnlyChild(document.getElementById("serviceUnitPage"), iframe);
 		}
 	}
 	conn.send();
