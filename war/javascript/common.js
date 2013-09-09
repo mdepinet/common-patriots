@@ -81,3 +81,23 @@ function getPolygons(callbackFn, id) {
 	}
 	conn.send();
 }
+
+function maybeShowUnsupportedBrowserError() {
+	navigator.sayswho = (function() {
+		var N = navigator.appName, ua= navigator.userAgent, tem;
+		var M = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+		if (M && (tem = ua.match(/version\/([\.\d]+)/i)) != null) M[2]= tem[1];
+		M = M ? [M[1], M[2]]: [N, navigator.appVersion,'-?'];
+		return M;
+	})(); // Go ahead and execute it.  The value won't change, so we don't really need to keep the function.
+
+	// Display alert for unsupported browser
+	var browser = navigator.sayswho[0];
+	var version = navigator.sayswho[1];
+	if (browser == "msie" && version < 10) {
+		alert("Common Patriots requires Chrome, Firefox, Safari, Opera, or the latest version of Internet Explorer." +
+				"\nPlease update or replace your browser.");
+	}
+}
+
+maybeShowUnsupportedBrowserError();

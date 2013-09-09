@@ -45,6 +45,9 @@ function getLatLng() {
 			<span id="serviceUnitCityStateZip">${suAddr2}</span><br />
 			<span id="serviceUnitInfoURL">${suInfoURL}</span>
 		</div>
+		<div id="serviceUnitPage">
+			<%-- iframe --%>
+		</div>
 	</div>
 </div>
 </body>
