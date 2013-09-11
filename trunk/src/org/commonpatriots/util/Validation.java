@@ -1,8 +1,10 @@
 package org.commonpatriots.util;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.commonpatriots.CPException;
+import org.commonpatriots.proto.CPData.State;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -11,7 +13,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 public final class Validation {
 	private static final Pattern emailPattern =
 			Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", Pattern.CASE_INSENSITIVE);
-	private static final Pattern addressPattern = Pattern.compile("^\\d+ [\\w ]+\\.?$");
+	private static final Pattern addressPattern = Pattern.compile("\\d+ [\\w ]+\\.?");
 	private static final Pattern zipPattern = Pattern.compile("\\d\\d\\d\\d\\d(-?\\d\\d\\d\\d)?");
 	private static final Pattern cityPattern = Pattern.compile("[\\w ]+");
 	private static final Pattern namePattern = Pattern.compile("[\\w ]+");
@@ -56,6 +58,43 @@ public final class Validation {
 
 	public static boolean isCity(String city) {
 		return cityPattern.matcher(city).matches();
+	}
+
+	public static boolean isAddressExtended(String address) {
+		Matcher addrMatcher = addressPattern.matcher(address);
+		String remaining = address;
+		if (addrMatcher.find()) {
+			remaining = address.substring(addrMatcher.end()).trim();
+			if (remaining.startsWith(",")) {
+				remaining = remaining.substring(1).trim();
+			}
+			if (Strings.isNullOrEmpty(remaining)) {
+				return true;
+			}
+			Matcher cityMatcher = cityPattern.matcher(remaining);
+			if (cityMatcher.find()) {
+				remaining = remaining.substring(cityMatcher.end()).trim();
+				if (remaining.startsWith(",")) {
+					remaining = remaining.substring(1).trim();
+				}
+				if (Strings.isNullOrEmpty(remaining)) {
+					return true;
+				}
+				String[] stateZip = remaining.split("[,\\s]");
+				String state = stateZip[0].trim();
+				try {
+					State.valueOf(state);
+				} catch (IllegalArgumentException ex) {
+					return false; // Invalid state
+				}
+				if (stateZip.length == 1) {
+					return true;
+				}
+				String zip = stateZip[1].trim();
+				return isZip(zip);
+			}
+		}
+		return false;
 	}
 
 	public static boolean isColor(String color) {

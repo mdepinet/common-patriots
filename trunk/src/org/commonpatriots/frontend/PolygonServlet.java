@@ -32,6 +32,9 @@ public class PolygonServlet extends HttpServlet {
 	}
 
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		if (maybeHandleLocationQuery(req, resp)) {
+			return;
+		}
 		String suid = req.getParameter("suid");
 		Collection<ServiceUnit> units = null;
 		if (!Strings.isNullOrEmpty(suid)) {
@@ -71,5 +74,38 @@ public class PolygonServlet extends HttpServlet {
 			buff.append("\n");
 		}
 		return buff.toString();
+	}
+
+	private boolean maybeHandleLocationQuery(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		String lat = req.getParameter("lat");
+		String lng = req.getParameter("lng");
+		if (!Strings.isNullOrEmpty(lat) && lat.matches("[-]?\\d+[.]?\\d+")
+				&& !Strings.isNullOrEmpty(lng) && lng.matches("[-]?\\d+[.]?\\d+")) {
+			double latitude = Double.parseDouble(lat);
+			double longitude = Double.parseDouble(lng);
+			ServiceUnitCollectionBo sucBo = sucBoProvider.get();
+			ServiceUnitBo bo = serviceUnitBoProvider.get();
+			sucBo.openAll();
+			Collection<ServiceUnit> units = sucBo.toDataObject();
+			StringBuffer output = new StringBuffer();
+			for (ServiceUnit unit : units) {
+				bo.open(unit);
+				Polygon serviceArea = bo.getPolygonForLocation(latitude, longitude);
+				if (serviceArea == null) {
+					continue;
+				}
+				output.append(polygonToString(serviceArea));
+				output.append("=");
+				output.append(unit.getName());
+				output.append("=");
+				output.append(!Strings.isNullOrEmpty(unit.getColor()) ? unit.getColor() : "#000000");
+				output.append("=");
+				output.append(serviceArea.getId());
+				output.append(";");
+			}
+			resp.getOutputStream().print(output.toString());
+			return true;
+		}
+		return false;
 	}
 }

@@ -14,13 +14,13 @@ var initialize = function() {
   }
   map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
-  getPolygons(function(results) {
-	  for (var i = 0; i < results.length; i++) {
-		  var polygon = results[i];
-		  google.maps.event.addListener(polygon, 'click', getMakeActivePolygonFn(polygon));
-		  polygon.setMap(map);
-	  }
-  });
+//  getPolygons(function(results) {
+//	  for (var i = 0; i < results.length; i++) {
+//		  var polygon = results[i];
+//		  google.maps.event.addListener(polygon, 'click', getMakeActivePolygonFn(polygon));
+//		  polygon.setMap(map);
+//	  }
+//  });
 }
 
 var loadMapsAPI = function() {
@@ -52,6 +52,7 @@ var updateMap = function() {
         	marker.setPosition(results[0].geometry.location);
         }
         marker.setTitle(address);
+        getResults(results[0].geometry.location.lat(), results[0].geometry.location.lng());
       } else {
         alert("Geocode was not successful for the following reason: " + status);
       }
@@ -87,7 +88,11 @@ function getMakeActivePolygonFn(polygon) {
 
 function setActiveServiceUnit(unitName, lat, lng) {
 	var conn = getAJAXConnection();
-	conn.open("GET","/serviceUnit?name=" + unitName + "&lat=" + lat + "&lng=" + lng, true);
+	if (lat && lng) {
+		conn.open("GET", "/serviceUnit?name=" + unitName + "&lat=" + lat + "&lng=" + lng, true);
+	} else {
+		conn.open("GET", "/serviceUnit?name=" + unitName, true);
+	}
 	conn.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 	conn.onreadystatechange = function() {
 		if (conn.readyState == 4 && conn.status == 200) {
@@ -139,4 +144,42 @@ function makeOnlyChild(parent, child) {
 	parent.appendChild(child);
 }
 
+function getResults(lat, lng) {
+	clearPolygons();
+	getPolygons(function(results) {
+		if (!results || results.length == 0) {
+			// No results.  Make a form to send Administrators email.
+			var address = document.forms["mapSearch"]["query"].value;
+			var iframe = document.createElement("iframe");
+			iframe.setAttribute("src", "/commonpatriots/forms/requestService?lat="
+					+ lat + "&lng=" + lng + "&q=" + address);
+			iframe.setAttribute("sandbox", "allow-same-origin allow-forms allow-scripts allow-top-navigation");
+			iframe.setAttribute("seamless");
+			// Can't put this in mainPageRight or the next search will fail to show results
+			makeOnlyChild(document.getElementById("serviceUnitPage"), iframe);
+		} else {
+			for (var i = 0; i < results.length; i++) {
+				var polygon = results[i];
+				if (results.length > 1) {
+					google.maps.event.addListener(polygon, 'click', getMakeActivePolygonFn(polygon));
+				}
+				polygon.setMap(map);
+				var polygonContainer = document.createElement("polygon");
+				polygonContainer.setAttribute("id", "polygon" + polygon.id);
+				polygonContainer.polygon = polygon;
+				document.body.appendChild(polygonContainer);
+			}
+			if (results.length == 1) {
+				setActiveServiceUnit(results[0].unitName);
+			}
+		}
+	}, null, lat, lng);
+}
 
+var clearPolygons = function() {
+	var polygonContainers = document.body.getElementsByTagName("polygon");
+	for (var i = 0; i < polygonContainers.length; i++) {
+		polygonContainers[i].polygon.setMap(null);
+		document.body.removeChild(polygonContainers[i]);
+	}
+}
