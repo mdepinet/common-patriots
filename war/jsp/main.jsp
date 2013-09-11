@@ -5,6 +5,7 @@
 <html>
 <head>
   <title>Common Patriots</title>
+  <link rel="shortcut icon" href="img/shortcut_icon.jpg" />
   <link type="text/css" rel="stylesheet" href="/stylesheets/common.css" />
   <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
   <link type="text/css" rel="stylesheet" href="/stylesheets/header.css" />
