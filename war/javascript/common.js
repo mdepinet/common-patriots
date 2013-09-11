@@ -45,10 +45,12 @@ function textToPolygon(text) {
 	return polygon;
 }
 
-function getPolygons(callbackFn, id) {
+function getPolygons(callbackFn, id, lat, lng) {
 	var conn = getAJAXConnection();
 	if (id) {
 		conn.open("GET", "/polygons?id=" + id, true);
+	} else if (lat && lng) {
+		conn.open("GET", "/polygons?lat=" + lat + "&lng=" + lng, true);
 	} else {
 		conn.open("GET", "/polygons", true);
 	}

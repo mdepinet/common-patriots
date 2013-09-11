@@ -224,12 +224,16 @@ public class ServiceUnitBo extends BaseBo<ServiceUnit> {
 	}
 
 	public boolean servesLocation(double latitude, double longitude) {
+		return getPolygonForLocation(latitude, longitude) != null;
+	}
+
+	public Polygon getPolygonForLocation(double latitude, double longitude) {
 		for (Polygon poly : data.getDistributionZonesList()) {
 			if (pointInsidePolygon(latitude, longitude, poly)) {
-				return true;
+				return poly;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	private boolean pointInsidePolygon(double latitude, double longitude, Polygon poly) {

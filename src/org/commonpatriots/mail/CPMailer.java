@@ -49,6 +49,12 @@ public class CPMailer {
 	private static final String REJECT_SU_COORDINATOR_SUBJECT_FORMAT = "%s's coordinator request was rejected";
 	private static final String REJECT_SU_COORDINATOR_MESSAGE_FORMAT = "%s (%s) rejected %s's (%s) request to become"
 			+ " a unit coordinator for %s";
+
+	private static final String SERVICE_REQUEST_SUBJECT_FORMAT = "%s's Service Request";
+	private static final String SERVICE_REQUEST_MESSAGE_FORMAT = "%s (%s) has requested service at %s (%f, %f).  " +
+			"The original request was for %s.  Please find a suitable service unit (adding a polygon if necessary) and "
+			+ "respond at your earliest convenience.";
+
 	private static final Properties props = new Properties();
 	private static final Session session = Session.getDefaultInstance(props, null);
 	private static final InternetAddress systemAddress;
@@ -216,6 +222,19 @@ public class CPMailer {
 		}
 	}
 
+	public static void sendServiceRequestMessage(List<Pair<String, String>> recipients,
+			String senderEmail, String senderName, String address, String originalQuery, double lat, double lng) {
+		String messageBody = String.format(SERVICE_REQUEST_MESSAGE_FORMAT, senderName, senderEmail, address, lat, lng,
+				originalQuery);
+		String subject = String.format(SERVICE_REQUEST_SUBJECT_FORMAT, senderName);
+		try {
+            List<InternetAddress> to = makeInternetAddresses(recipients);
+            sendPersonalMessage(subject, messageBody, to, new InternetAddress(senderEmail, senderName));
+        } catch (MessagingException | UnsupportedEncodingException ex) {
+            ex.printStackTrace();
+        }
+	}
+
 	private static String trimReplyPrefix(String subject) {
 		subject = subject.trim();
 		if (subject.startsWith("Re:") || subject.startsWith("RE:")) {
@@ -233,10 +252,20 @@ public class CPMailer {
         return to;
 	}
 
+	private static void sendPersonalMessage(String subject, String messageBody, List<InternetAddress> to,
+			InternetAddress from) throws MessagingException {
+		sendMessage(subject, messageBody, to, from);
+	}
+
 	private static void sendSystemMessage(String subject, String messageBody, List<InternetAddress> to)
 			throws MessagingException {
+		sendMessage(subject, messageBody, to, systemAddress);
+	}
+
+	private static void sendMessage(String subject, String messageBody, List<InternetAddress> to,
+			InternetAddress from) throws MessagingException {
         Message msg = new MimeMessage(session);
-        msg.setFrom(systemAddress);
+        msg.setFrom(from);
         msg.addRecipient(Message.RecipientType.BCC, webmasterAddress);
         for (InternetAddress recipient : to) {
             msg.addRecipient(Message.RecipientType.TO, recipient);
