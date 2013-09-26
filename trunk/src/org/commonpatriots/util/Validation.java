@@ -13,7 +13,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 public final class Validation {
 	private static final Pattern emailPattern =
 			Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", Pattern.CASE_INSENSITIVE);
-	private static final Pattern addressPattern = Pattern.compile("\\d+ [\\w ]+\\.?");
+	private static final Pattern addressPattern = Pattern.compile("(\\d+ [\\w' ]+\\.?)|(((PO Box)|(POB)) \\d+)");
 	private static final Pattern zipPattern = Pattern.compile("\\d\\d\\d\\d\\d(-?\\d\\d\\d\\d)?");
 	private static final Pattern cityPattern = Pattern.compile("[\\w ]+");
 	private static final Pattern namePattern = Pattern.compile("[\\w ]+");

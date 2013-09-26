@@ -167,13 +167,19 @@ public class ServiceUnitBo extends BaseBo<ServiceUnit> {
 		data.setContactInfo(ContactInfo.newBuilder(data.getContactInfo()).setState(state));
 	}
 
-	public int getZip() {
+	public String getZip() {
 		checkIsOpen();
-		return data.hasContactInfo() ? data.getContactInfo().getZip() : null;
+		int intVal = data.hasContactInfo() ? data.getContactInfo().getZip() : null;
+		if (intVal > 99999) { // Must be 9 digits
+			 return "" + intVal / 100000 + "-" + intVal % 100000;
+		} else {
+			return "" + intVal;
+		}
 	}
 	
 	public void setZip(String zip) {
 		checkIsOpen();
+		zip = zip.replaceAll("-", "");
 		int parsedZip = Integer.parseInt(zip);
 		data.setContactInfo(ContactInfo.newBuilder(data.getContactInfo()).setZip(parsedZip));
 	}
