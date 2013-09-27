@@ -37,4 +37,17 @@ public final class Strings {
 			return phone;
 		}
 	}
+
+	public static String formatZip(String zip) {
+		if (!Validation.isZip(zip)) {
+			System.err.println("Tried to format illegal zip code: " + zip);
+			return zip;
+		} else if (zip.matches("^\\d\\d\\d\\d\\d$")) {
+			return zip;
+		} else if (zip.matches("^\\d\\d\\d\\d\\d-\\d\\d\\d\\d$")) {
+			return zip;
+		} else {
+			return zip.substring(0,5) + "-" + zip.substring(5);
+		}
+	}
 }
