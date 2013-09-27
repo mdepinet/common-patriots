@@ -9,6 +9,7 @@ import org.commonpatriots.proto.CPData.ServiceUnit;
 import org.commonpatriots.proto.CPData.ServiceUnit.Polygon;
 import org.commonpatriots.proto.CPData.State;
 import org.commonpatriots.util.CPUtil;
+import org.commonpatriots.util.Strings;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -169,12 +170,8 @@ public class ServiceUnitBo extends BaseBo<ServiceUnit> {
 
 	public String getZip() {
 		checkIsOpen();
-		int intVal = data.hasContactInfo() ? data.getContactInfo().getZip() : null;
-		if (intVal > 99999) { // Must be 9 digits
-			 return "" + intVal / 100000 + "-" + intVal % 100000;
-		} else {
-			return "" + intVal;
-		}
+		int zip = data.hasContactInfo() ? data.getContactInfo().getZip() : null;
+		return Strings.formatZip("" + zip);
 	}
 	
 	public void setZip(String zip) {
