@@ -54,7 +54,7 @@ var updateMap = function() {
         marker.setTitle(address);
         getResults(results[0].geometry.location.lat(), results[0].geometry.location.lng());
       } else {
-        alert("Geocode was not successful for the following reason: " + status);
+    	showRequestServiceForm(0, 0);
       }
     });
 }
@@ -149,14 +149,7 @@ function getResults(lat, lng) {
 	getPolygons(function(results) {
 		if (!results || results.length == 0) {
 			// No results.  Make a form to send Administrators email.
-			var address = document.forms["mapSearch"]["query"].value;
-			var iframe = document.createElement("iframe");
-			iframe.setAttribute("src", "/commonpatriots/forms/requestService?lat="
-					+ lat + "&lng=" + lng + "&q=" + address);
-			iframe.setAttribute("sandbox", "allow-same-origin allow-forms allow-scripts allow-top-navigation");
-			iframe.setAttribute("seamless");
-			// Can't put this in mainPageRight or the next search will fail to show results
-			makeOnlyChild(document.getElementById("serviceUnitPage"), iframe);
+			showRequestServiceForm(lat, lng);
 		} else {
 			for (var i = 0; i < results.length; i++) {
 				var polygon = results[i];
@@ -174,6 +167,17 @@ function getResults(lat, lng) {
 			}
 		}
 	}, null, lat, lng);
+}
+
+function showRequestServiceForm(lat, lng) {
+	var address = document.forms["mapSearch"]["query"].value;
+	var iframe = document.createElement("iframe");
+	iframe.setAttribute("src", "/commonpatriots/forms/requestService?lat="
+			+ lat + "&lng=" + lng + "&q=" + address);
+	iframe.setAttribute("sandbox", "allow-same-origin allow-forms allow-scripts allow-top-navigation");
+	iframe.setAttribute("seamless");
+	// Can't put this in mainPageRight or the next search will fail to show results
+	makeOnlyChild(document.getElementById("serviceUnitPage"), iframe);
 }
 
 var clearPolygons = function() {
