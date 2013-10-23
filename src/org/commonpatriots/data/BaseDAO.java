@@ -167,17 +167,6 @@ class BaseDAO {
 		}
 	}
 
-	ServiceUnit getOwnerOfZone(Polygon zone) {
-		Iterator<Entity> unitEntities = datastore.prepare(new Query(SERVICE_UNIT_KIND)
-			.setFilter(new Query.FilterPredicate(SERVICE_UNIT_ZONES_PROPERTY, Query.FilterOperator.EQUAL,
-			new ShortBlob(zone.toByteArray()))).setKeysOnly()).asIterator(FetchOptions.Builder.withLimit(1));
-		if (!unitEntities.hasNext()) {
-			throw new CPDAOException("Could not find service unit entity with zone " + zone);
-		} else {
-			return getServiceUnitFromEntity(get(unitEntities.next().getKey()));
-		}
-	}
-
 	List<ServiceUnit> getAllServiceUnits() {
 		Iterator<Entity> unitIdEntities = datastore.prepare(new Query(SERVICE_UNIT_KIND).setKeysOnly()).asIterator();
 		List<Entity> unitEntities = get(unitIdEntities);
@@ -292,9 +281,9 @@ class BaseDAO {
 			unitEntity.setProperty(SERVICE_UNIT_NAME_PROPERTY, name);
 		}
 		if (zones != null && !zones.isEmpty()) {
-			List<ShortBlob> blobs = CPUtil.newLinkedList();
+			List<Blob> blobs = CPUtil.newLinkedList();
 			for (Polygon zone : zones) {
-				blobs.add(new ShortBlob(zone.toByteArray()));
+				blobs.add(new Blob(zone.toByteArray()));
 			}
 			unitEntity.setProperty(SERVICE_UNIT_ZONES_PROPERTY, blobs);
 		}
@@ -317,12 +306,23 @@ class BaseDAO {
 			builder.setName((String) unitEntity.getProperty(SERVICE_UNIT_NAME_PROPERTY));
 		}
 		if (unitEntity.hasProperty(SERVICE_UNIT_ZONES_PROPERTY)) {
-			Collection<ShortBlob> blobs = (Collection<ShortBlob>) unitEntity.getProperty(SERVICE_UNIT_ZONES_PROPERTY);
-			for (ShortBlob blob : blobs) {
-				try {
-					builder.addDistributionZones(Polygon.parseFrom(blob.getBytes()));
-				} catch (InvalidProtocolBufferException e) {
-					throw new CPRuntimeException("Invalid Polygon read from datastore!", e);
+			try {
+				Collection<Blob> blobs = (Collection<Blob>) unitEntity.getProperty(SERVICE_UNIT_ZONES_PROPERTY);
+				for (Blob blob : blobs) {
+					try {
+						builder.addDistributionZones(Polygon.parseFrom(blob.getBytes()));
+					} catch (InvalidProtocolBufferException e) {
+						throw new CPRuntimeException("Invalid Polygon read from datastore!", e);
+					}
+				}
+			} catch (ClassCastException ex) { // Service unit hasn't been upgraded
+				Collection<ShortBlob> blobs = (Collection<ShortBlob>) unitEntity.getProperty(SERVICE_UNIT_ZONES_PROPERTY);
+				for (ShortBlob blob : blobs) {
+					try {
+						builder.addDistributionZones(Polygon.parseFrom(blob.getBytes()));
+					} catch (InvalidProtocolBufferException e) {
+						throw new CPRuntimeException("Invalid Polygon read from datastore!", e);
+					}
 				}
 			}
 		}

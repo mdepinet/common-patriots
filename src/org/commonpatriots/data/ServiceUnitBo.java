@@ -2,7 +2,6 @@ package org.commonpatriots.data;
 
 import java.util.List;
 
-import org.commonpatriots.CPException;
 import org.commonpatriots.data.BaseDAO.CPDAOException;
 import org.commonpatriots.proto.CPData.ContactInfo;
 import org.commonpatriots.proto.CPData.ServiceUnit;
@@ -56,15 +55,6 @@ public class ServiceUnitBo extends BaseBo<ServiceUnit> {
 	public void open(ServiceUnit data) {
 		this.data = ServiceUnit.newBuilder(data);
 		isOpen = true;
-	}
-
-	public boolean openOwner(Polygon zone) throws CPException {
-		try {
-			open(daoProvider.get().getOwnerOfZone(zone));
-			return true;
-		} catch (CPDAOException ex) {
-			throw new CPException("Could not find owner of zone " + zone, ex);
-		}
 	}
 
 	public String create() {
