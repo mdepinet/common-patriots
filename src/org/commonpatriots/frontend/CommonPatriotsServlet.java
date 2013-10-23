@@ -77,7 +77,8 @@ public class CommonPatriotsServlet extends HttpServlet {
 			req.setAttribute("username", user.getNickname());
 			req.setAttribute("logoutURL", userService.createLogoutURL("/jsp/loggedOut.jsp"));
 			try {
-				getServletContext().getRequestDispatcher("/jsp/main.jsp").forward(req, resp);
+				String page = "/jsp/" + ("true".equals(req.getParameter("mapOnly")) ? "mapOnly" : "main") + ".jsp";
+				getServletContext().getRequestDispatcher(page).forward(req, resp);
 			} catch (ServletException e) {
 				e.printStackTrace();
 			}
