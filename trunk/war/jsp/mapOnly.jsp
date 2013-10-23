@@ -23,7 +23,6 @@ function getLatLng() {
 </head>
 
 <body>
-<%@ include file="./header.jsp" %>
 <%@ include file="./mapFrame.jsp" %>
 </body>
 </html>
