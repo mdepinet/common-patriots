@@ -46,7 +46,8 @@ public class CommonPatriotsServlet extends HttpServlet {
 			req.setAttribute("loginURL", userService.createLoginURL("/commonpatriots"));
 			setRequestPosition(req);
 			try {
-				getServletContext().getRequestDispatcher("/jsp/main.jsp").forward(req, resp);
+				String page = "/jsp/" + ("true".equals(req.getParameter("mapOnly")) ? "mapOnly" : "main") + ".jsp";
+				getServletContext().getRequestDispatcher(page).forward(req, resp);
 			} catch (ServletException e) {
 				e.printStackTrace();
 			}
