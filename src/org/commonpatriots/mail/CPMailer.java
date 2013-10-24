@@ -254,17 +254,20 @@ public class CPMailer {
 
 	private static void sendPersonalMessage(String subject, String messageBody, List<InternetAddress> to,
 			InternetAddress from) throws MessagingException {
-		sendMessage(subject, messageBody, to, from);
+		sendMessage(subject, messageBody, to, systemAddress, from);
 	}
 
 	private static void sendSystemMessage(String subject, String messageBody, List<InternetAddress> to)
 			throws MessagingException {
-		sendMessage(subject, messageBody, to, systemAddress);
+		sendMessage(subject, messageBody, to, systemAddress, null);
 	}
 
 	private static void sendMessage(String subject, String messageBody, List<InternetAddress> to,
-			InternetAddress from) throws MessagingException {
+			InternetAddress from, InternetAddress replyTo) throws MessagingException {
         Message msg = new MimeMessage(session);
+        if (replyTo != null) {
+        	msg.setReplyTo(new InternetAddress[] {replyTo});
+        }
         msg.setFrom(from);
         msg.addRecipient(Message.RecipientType.BCC, webmasterAddress);
         for (InternetAddress recipient : to) {
@@ -273,5 +276,6 @@ public class CPMailer {
         msg.setSubject(subject);
         msg.setText(messageBody);
         Transport.send(msg);
+        System.out.println("Sent message from " + msg.getFrom()[0] + " with subject \"" + msg.getSubject() + "\"");
 	}
 }
