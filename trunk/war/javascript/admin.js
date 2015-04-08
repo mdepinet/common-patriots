@@ -1,24 +1,43 @@
 function getUpdateFunction(propertyName, id) {
 	return function(event) {
-		var conn = getAJAXConnection();
-		conn.open("POST","/admin/serviceUnit",true);
-		conn.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-		conn.onreadystatechange = function() {
-			if (conn.readyState == 4 && conn.status == 200) {
-				/*
-				 * 0 = Unchanged
-				 * 1 = Success
-				 * 2 = Bad request
-				 */
-				var valid = (conn.responseText != "2");
-				if (!valid) {
-					event.target.style.backgroundColor = "#FF2525";
-				} else {
-					event.target.style.backgroundColor = "#FFFFFF";
-				}
-			}
+		postServiceUnitChange(event.target, id, propertyName, event.target.value, true);
+	}
+}
+
+function postServiceUnitChange(target, id, propertyName, propertyValue, allowRetry) {
+	var conn = getAJAXConnection();
+	conn.open("POST","/admin/serviceUnit",true);
+	conn.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	conn.onreadystatechange = function() {
+		if (conn.readyState == 4 && conn.status == 200) {
+			processServerResponse(conn.responseText, target, id, propertyName, propertyValue, allowRetry);
 		}
-		conn.send("id=" + id + "&" + propertyName + "=" + event.target.value);
+	}
+	var params = "id=" + id + "&" + propertyName + "=" + propertyValue;
+	if (!allowRetry) {
+		params = params + "&ignoreValidation=true";
+	}
+	conn.send(params);
+}
+
+function processServerResponse(responseText, target, id, propertyName, propertyValue, allowRetry) {
+	/*
+	 * 0 = Unchanged
+	 * 1 = Success
+	 * 2 = Bad request
+	 */
+	var valid = (responseText != "2");
+	if (!valid) {
+		target.style.backgroundColor = "#FF2525";
+		if ("state" != propertyName
+			&& allowRetry
+			&& confirm("Are you sure you want to change " + propertyName + " to " + target.value  + "?"
+					+ "\n\nCommon Patriots validation thinks your value is invalid, but since you're an admin "
+					+ "you may ignore it if you're sure the value provided is correct.")) {
+			postServiceUnitChange(target, id, propertyName, propertyValue, false);
+		}
+	} else {
+		target.style.backgroundColor = "#FFFFFF";
 	}
 }
 
