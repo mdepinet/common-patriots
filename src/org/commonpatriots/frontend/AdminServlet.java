@@ -197,11 +197,12 @@ public class AdminServlet extends HttpServlet {
 					String zip = req.getParameter("zip");
 					String color = req.getParameter("color");
 					String infoFrameLoc = req.getParameter("infoFrameLoc");
+					boolean ignoreValidation = "true".equals(req.getParameter("ignoreValidation"));
 					int result = 0;
 					resp.setContentType("text/plain");
 					ServletOutputStream out = resp.getOutputStream();
 					if (result != 2 && !Strings.isNullOrEmpty(name)) {
-						if (Validation.isName(name)) {
+						if (ignoreValidation || Validation.isName(name)) {
 							if (name.equals(suBo.getName())) {
 								// Unchanged
 							} else {
@@ -213,7 +214,7 @@ public class AdminServlet extends HttpServlet {
 						}
 					}
 					if (result != 2 && !Strings.isNullOrEmpty(email)) {
-						if (Validation.isEmailAddress(email)) {
+						if (ignoreValidation || Validation.isEmailAddress(email)) {
 							if (email.equals(suBo.getEmail())) {
 								// Unchanged
 							} else {
@@ -225,7 +226,7 @@ public class AdminServlet extends HttpServlet {
 						}
 					}
 					if (result != 2 && !Strings.isNullOrEmpty(phone)) {
-						if (Validation.isPhoneNumber(phone)) {
+						if (ignoreValidation || Validation.isPhoneNumber(phone)) {
 							if (phone.equals(suBo.getPhone())) {
 								// Unchanged
 							} else {
@@ -237,7 +238,7 @@ public class AdminServlet extends HttpServlet {
 						}
 					}
 					if (result != 2 && !Strings.isNullOrEmpty(color)) {
-						if (Validation.isColor(color)) {
+						if (ignoreValidation || Validation.isColor(color)) {
 							if (color.equals(suBo.getColor())) {
 								// Unchanged
 							} else {
@@ -249,7 +250,7 @@ public class AdminServlet extends HttpServlet {
 						}
 					}
 					if (result != 2 && !Strings.isNullOrEmpty(address)) {
-						if (Validation.isAddress(address)) {
+						if (ignoreValidation || Validation.isAddress(address)) {
 							if (address.equals(suBo.getAddress())) {
 								// Unchanged
 							} else {
@@ -261,7 +262,7 @@ public class AdminServlet extends HttpServlet {
 						}
 					}
 					if (result != 2 && !Strings.isNullOrEmpty(city)) {
-						if (Validation.isCity(city)) {
+						if (ignoreValidation || Validation.isCity(city)) {
 							if (city.equals(suBo.getCity())) {
 								// Unchanged
 							} else {
@@ -285,7 +286,7 @@ public class AdminServlet extends HttpServlet {
 						}
 					}
 					if (result != 2 && !Strings.isNullOrEmpty(zip)) {
-						if (Validation.isZip(zip)) {
+						if (ignoreValidation || Validation.isZip(zip)) {
 							if (zip.equals(suBo.getZip())) {
 								// Unchanged
 							} else {
@@ -297,7 +298,7 @@ public class AdminServlet extends HttpServlet {
 						}
 					}
 					if (result != 2 && !Strings.isNullOrEmpty(infoFrameLoc)) {
-						if (Validation.isURL(infoFrameLoc)) {
+						if (ignoreValidation || Validation.isURL(infoFrameLoc)) {
 							if (infoFrameLoc.equals(suBo.getInfoFrameLoc())) {
 								// Unchanged
 							} else {
